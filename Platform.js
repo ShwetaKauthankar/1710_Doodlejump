@@ -1,43 +1,58 @@
-function Platform(x,y,s,c){
-	this.x=x;
-	this.y=y;
 
-	this.s;
-	this.c;
+function Platform(x, altitude, size, color) {
 
-	this.onScreen = true;
+  this.x = x;
+  this.altitude = altitude;
 
+  this.size = size;
+  this.color = color;
+
+  this.onScreen = true;
 }
 
-Platform.prototype.draw = function(altitude){
+/**
+ * draws platform at altitude
+ */
+Platform.prototype.draw = function(altitude) {
 
-	stroke(255);
-	strokeWeight(4);
-	fill(this.color);
+  stroke(0);
+ strokeWeight(2);
+  fill(this.color);
 
-	if ( y - this.y < height / 2){
-		rect(this.x, (y - this.y + height / 2) , this.size , 15)
-	}
-	else{
-		this.onScreen = false;
-	}
+	// relative to player
+  if (altitude - this.altitude < height / 2) {
+		// on-screen
+
+    rect(this.x, (altitude - this.altitude + height / 2) , this.size, 15);
+  } else {
+    this.onScreen = false;
+  }
 };
 
-Platform.prototype.colloideWith = function(doodler) {
-	var PlatformTop  = this.altitude;
-	var doodlerBottom = doodler.location.y - doodler.size/2;
+/**
+ returns whether passed Doodler hits the platform
+ */
+Platform.prototype.collidesWith = function(doodler) {
 
-	stroke(#FFF000);
-	strokeWeight(10);
+  var platformTop = this.altitude;
+  var doodlerBottom = doodler.location.y - doodler.size / 2 ;
 
-	if(Math.abs(PlatformTop - doodlerBottom) < -doodler.velocity.y && PlatformTop < doodlerBottom) {
-		var PlatformLeftX = this.x;
-		var PlatformRightX = this.x + this.size;
+  stroke("#FF0000");
+  strokeWeight(10);
 
-		var doodlerLeftX = doodler.location.x - doodler.size / 2;
-		var doodlerRightX = doodler.location.x + doodler.size / 2;
+  if (Math.abs(platformTop - doodlerBottom) < -doodler.velocity.y && platformTop < doodlerBottom) {
 
-		return (( doodlerLeftX >= PlatformLeftX   && doodlerRightX <= PlatformRightX) || (doodlerRightX >= PlatformRightX && )))
-	}
+    var platformLeftX = this.x; // platform lefter-most x bound
+    var platformRightX = this.x + this.size; // platform righter-most x bound
 
-}
+    var doodlerLeftX = doodler.location.x - doodler.size / 2; // doodler lefter-most x bound
+    var doodlerRightX = doodler.location.x + doodler.size / 2; // doodler righter-most x bound
+
+    return ((doodlerLeftX >= platformLeftX && // if the doodler's left X falls between the platform
+			doodlerLeftX <= platformRightX) ||
+			(doodlerRightX >= platformLeftX && // if the doodler's right X falls between the platform
+			doodlerRightX <= platformRightX));
+  }
+
+  return false;
+};
